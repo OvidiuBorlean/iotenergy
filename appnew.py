@@ -2,7 +2,7 @@
 # Importing required functions
 from flask import Flask, request, render_template
 from datetime import datetime
-
+from influxdb import InfluxDBClient
 # Flask constructor
 timeBox = ""
 now = datetime.now()
@@ -11,6 +11,51 @@ iso_date = now.isoformat()
 print('ISO DateTime:', iso_date)
 app = Flask(__name__)
 
+
+def iotenergy(value, time):
+        print("----> ", time, value)
+        json_body = [
+        {
+        "measurement": "energy",
+        "tags": {
+            "house": "Mosnita Veche",
+            "kind": "Electric"
+        },
+        "time": time,
+        "fields": {
+            "value": value
+        }
+    }
+
+]
+        client = InfluxDBClient('localhost', 8086, 'root', 'root', 'energy')
+
+        #client.create_database('energy')
+        client.write_points(json_body)
+
+
+def iotgas(value, time):
+        print("---> ", time, value)
+        json_body = [
+        {
+        "measurement": "energy",
+        "tags": {
+            "house": "Mosnita Veche",
+            "kind": "Gas"
+        },
+        "time": time,
+        "fields": {
+            "value": value
+        }
+    }
+
+]
+
+        client = InfluxDBClient('localhost', 8086, 'root', 'root', 'energy')
+
+#client.create_database('gas')
+        #print(type(json_body))
+        client.write_points(json_body)
 # Root endpoint
 @app.route('/', methods=['GET'])
 def index():
@@ -36,6 +81,8 @@ def read_form():
         if data.getlist('switch'):
           print("Yuhuu")
           timeBox = iso_date
+          iotenergy(int(data['indexElectricity']), timeBox)
+          iotgas(int(data['indexGas']), timeBox)
         else:
           timeBox = data['indexTime']
         print("Time Now: - ", timeBox)
@@ -48,4 +95,4 @@ def read_form():
 # Main Driver Function
 if __name__ == '__main__':
         # Run the application on the local development server
-        app.run()
+        app.run(host='0.0.0.0')
