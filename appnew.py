@@ -18,8 +18,8 @@ def read_form():
         data = request.form
         print("Index electricity - ",data['indexElectricity'])
         print("Index Gas - ", data['indexGas'])
-        value = data.getlist('switch')
-        print(type(value))
+        if data.getlist('switch'):
+          print("Yuhuu")
         #if switch.validate():
         ## Return the extracted information
         #if data['switch'] == "on":
