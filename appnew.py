@@ -21,9 +21,16 @@ def index():
 # `read-form` endpoint
 @app.route('/read-form', methods=['POST'])
 def read_form():
-
         # Get the form data as Python ImmutableDict datatype
         data = request.form
+        elec = data['indexElectricity'].isdigit()
+        gs = data['indexGas'].isdigit()
+        #print(elec.isdigit())
+        #print(gs.isdigit())
+        if elec == False:
+          return "Electricity Index Not Number"
+        if gs == False:
+          return ("Gas Index not Number")
         print("Index electricity - ",data['indexElectricity'])
         print("Index Gas - ", data['indexGas'])
         if data.getlist('switch'):
